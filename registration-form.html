@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>5TH AORN NATIONAL CONFERENCE 2026 — AORN Mumbai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root{
+    --ink:#0f1b33;
+    --paper:#eaf4fb;
+    --card:#ffffff;
+    --teal:#0b2f6b;
+    --teal-light:#1e56b0;
+    --teal-dim:#5170a0;
+    --amber:#0f7ea3;
+    --amber-dim:#a9d9ea;
+    --line: #cfe0ee;
+    --danger:#a8412f;
+    --ok:#2f6b4f;
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      linear-gradient(var(--paper),var(--paper)),
+      repeating-linear-gradient(135deg, rgba(11,47,107,0.035) 0 2px, transparent 2px 14px);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:36px 18px 60px;}
+
+  header.top{padding:6px 4px 30px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--amber);
+    display:flex;align-items:center;gap:8px;
+    margin-bottom:10px;
+  }
+  .eyebrow::before{content:"";width:20px;height:1px;background:var(--amber);display:inline-block;}
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(26px,6.4vw,36px);
+    line-height:1.1;
+    margin:0 0 10px;
+    background: linear-gradient(120deg, var(--teal) 30%, var(--teal-light));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .sub{color:var(--teal-dim);font-size:15px;max-width:52ch;}
+
+  .event-info{
+    margin-top:20px;
+    border-left:2px solid var(--amber);
+    padding:2px 0 2px 16px;
+  }
+  .event-info .row{ display:flex; gap:8px; font-size:14px; padding:5px 0; flex-wrap:wrap; }
+  .event-info .row .k{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--teal); min-width:118px; flex-shrink:0; padding-top:1px;
+  }
+  .event-info .row .v{color:var(--ink);}
+  .event-info .contacts{margin-top:2px;}
+  .event-info .contacts .v{display:flex;flex-direction:column;gap:2px;}
+  .event-info a{color:var(--teal);text-decoration:none;border-bottom:1px solid var(--amber-dim);}
+  .event-info a:hover{border-bottom-color:var(--amber);}
+
+  .stitch{ border:none; border-top:2px dashed var(--line); margin:34px 0; position:relative; }
+  .stitch::after{
+    content:"✚"; position:absolute; top:-11px;left:50%;transform:translateX(-50%);
+    background:var(--paper); color:var(--amber); font-size:14px; padding:0 8px;
+  }
+
+  .step-label{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--teal);
+    display:flex; align-items:center; gap:10px; margin-bottom:16px;
+  }
+  .step-label .n{
+    width:24px;height:24px; border-radius:50%; background:linear-gradient(135deg, var(--teal), var(--teal-light));
+    color:#fff; box-shadow:0 3px 8px rgba(11,47,107,0.28);
+    display:flex;align-items:center;justify-content:center; font-size:11px; flex-shrink:0;
+  }
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:22px 20px; margin-bottom:16px; box-shadow: 0 4px 14px rgba(11,47,107,0.06);
+  }
+
+  label.field-label{ display:block; font-weight:500; font-size:14.5px; margin-bottom:4px; color:var(--ink); }
+  .req{color:var(--danger);margin-left:2px;}
+  .hint{font-size:12.5px;color:var(--teal-dim);margin-bottom:10px;}
+  code{ background:rgba(11,47,107,0.08); padding:1px 5px; border-radius:4px; font-size:11.5px; }
+
+  input[type=text], input[type=email], input[type=tel], input[type=number], input[type=password]{
+    width:100%; border:none; border-bottom:1px solid var(--line); background:transparent;
+    font-family:'IBM Plex Sans',sans-serif; font-size:15px; padding:9px 2px; color:var(--ink);
+    outline:none; transition:border-color .15s ease;
+  }
+  input:focus{border-bottom:1.5px solid var(--teal);}
+  input::placeholder{color:#a9a49a;}
+
+  .radio-row, .check-row{ display:flex; gap:14px; margin-top:6px; flex-wrap:wrap; }
+  .opt{
+    display:flex; align-items:center; gap:8px; font-size:14.5px; cursor:pointer;
+    padding:8px 14px; border:1px solid var(--line); border-radius:999px;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .opt input{width:auto;accent-color:var(--teal);}
+  .opt:has(input:checked){ border-color:var(--teal); background: rgba(11,47,107,0.06); box-shadow: inset 0 0 0 1px var(--teal); }
+
+  .amount-opt{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 16px; margin-bottom:8px; border:1px solid var(--line); border-radius:10px;
+    cursor:pointer; transition: border-color .15s ease, background .15s ease;
+  }
+  .amount-opt:has(input:checked){ border-color:var(--teal); background: rgba(11,47,107,0.06); box-shadow: inset 0 0 0 1px var(--teal); }
+  .amount-opt .label{display:flex;align-items:center;gap:10px;font-size:14.5px;}
+  .amount-opt .price{font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--teal);}
+  .amount-opt input{width:auto;accent-color:var(--teal);}
+
+  .qr-card{ text-align:center; padding:6px 0 6px; }
+  .qr-frame{
+    width:200px;height:200px; margin:0 auto 14px; border:2px solid var(--teal);
+    border-radius:10px; display:flex;align-items:center;justify-content:center;
+    box-shadow: 0 6px 18px rgba(11,47,107,0.12);
+    background:
+      linear-gradient(90deg, var(--amber) 0 4px, transparent 4px) 0 0,
+      linear-gradient(90deg, var(--amber) 0 4px, transparent 4px) 0 100%,
+      linear-gradient(0deg, var(--amber) 0 4px, transparent 4px) 0 0,
+      linear-gradient(0deg, var(--amber) 0 4px, transparent 4px) 100% 0;
+    background-repeat:no-repeat; background-size: 30px 4px, 30px 4px, 4px 30px, 4px 30px;
+    padding:14px;
+  }
+  #qrCanvas{display:flex;align-items:center;justify-content:center;width:100%;height:100%;}
+  #qrCanvas img{width:100%;height:100%;object-fit:contain;}
+  .qr-note{font-size:12.5px;color:var(--teal-dim);}
+
+  button.submit, button.ghost-btn{
+    width:100%; border:none; border-radius:999px; padding:15px; font-size:15px; font-weight:600;
+    font-family:'IBM Plex Sans',sans-serif; letter-spacing:.02em; cursor:pointer;
+    transition: background .15s ease, box-shadow .2s ease, transform .15s ease, opacity .15s ease;
+  }
+  button.submit{ background:linear-gradient(135deg, var(--teal), var(--teal-light)); color:#fefcf6; margin-top:8px; box-shadow:0 8px 20px rgba(11,47,107,0.28); }
+  button.submit:hover{ box-shadow:0 10px 24px rgba(11,47,107,0.36); transform:translateY(-1px); }
+  button.submit:disabled{ background:#b9c6dc; box-shadow:none; cursor:not-allowed; opacity:.7; transform:none; }
+  button.submit:active{transform:scale(0.99);}
+  button.ghost-btn{ background:transparent; color:var(--teal); border:1.5px solid var(--teal); }
+  button.ghost-btn:hover{background:rgba(11,47,107,0.06);}
+
+  .status{ margin-top:14px; font-size:13.5px; padding:12px 14px; border-radius:10px; display:none; }
+  .status.show{display:block;}
+  .status.ok{background:rgba(47,107,79,0.1);color:var(--ok);}
+  .status.err{background:rgba(168,65,47,0.1);color:var(--danger);}
+  .status.pending{background:rgba(15,126,163,0.1);color:var(--amber);}
+
+  footer{ text-align:center; font-size:12px; color:var(--teal-dim); margin-top:30px; font-family:'IBM Plex Mono',monospace; }
+  footer .admin-link{
+    display:inline-block; margin-top:10px; color:var(--teal-dim);
+    text-decoration:underline; text-decoration-color:var(--line); cursor:pointer; font-size:11.5px;
+  }
+
+  .overlay{
+    position:fixed; inset:0; background:rgba(23,35,31,0.55); display:none;
+    align-items:flex-start; justify-content:center; padding:40px 16px; overflow-y:auto; z-index:50;
+  }
+  .overlay.show{display:flex;}
+  .admin-panel{ background:var(--card); border-radius:var(--radius); max-width:680px; width:100%; padding:26px 22px; border:1px solid var(--line); }
+  .admin-panel h2{ font-family:'Fraunces',serif; color:var(--teal); margin:0 0 4px; font-size:22px; }
+  .admin-panel .close-x{ float:right; cursor:pointer; color:var(--teal-dim); font-size:20px; line-height:1; }
+  .admin-table{width:100%;border-collapse:collapse;margin-top:16px;font-size:12.5px;}
+  .admin-table th, .admin-table td{ text-align:left; padding:8px 6px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  .admin-table-wrap{overflow-x:auto;}
+  .admin-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+  .admin-actions button{width:auto;padding:10px 18px;}
+  .warn-box{ font-size:12px; color:var(--danger); background:rgba(168,65,47,0.08); border-radius:8px; padding:10px 12px; margin-top:12px; }
+
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="eyebrow">Association of Operating Room Nurses</div>
+    <h1>5<sup>th</sup> AORN NATIONAL CONFERENCE 2026</h1>
+
+    <div class="event-info">
+      <div class="row">
+        <span class="k">Event Timing</span>
+        <span class="v">October 17-18, 2026 · 8.00 am to 5.00 pm</span>
+      </div>
+      <div class="row">
+        <span class="k">Event Address</span>
+        <span class="v">R D. Choski Auditorium, Second Floor, Tata Memorial Hospital, Parel, Mumbai – 400012, Maharashtra.</span>
+      </div>
+      <div class="row contacts">
+        <span class="k">Contact Details</span>
+        <span class="v">
+          <span>Ms. Madhavi Tulaskar — <a href="tel:+919987385384">9987385384</a></span>
+          <span>Ms. Sneha Satam — <a href="tel:+918652117529">8652117529</a></span>
+          <span>Mr. Amit Shirke — <a href="tel:+919284346791">9284346791</a></span>
+          <span><a href="mailto:aornmumbai@gmail.com">aornmumbai@gmail.com</a></span>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <form id="regForm">
+
+    <div class="step-label"><span class="n">1</span> Your details</div>
+    <div class="card">
+      <label class="field-label" for="fullName">Full Name<span class="req">*</span></label>
+      <input type="text" id="fullName" name="fullName" placeholder="Your answer" required />
+    </div>
+    <div class="card">
+      <label class="field-label" for="email">Email<span class="req">*</span></label>
+      <input type="email" id="email" name="email" placeholder="Your answer" required />
+    </div>
+    <div class="card">
+      <label class="field-label" for="mobile">Mobile Number<span class="req">*</span></label>
+      <input type="tel" id="mobile" name="mobile" placeholder="Your answer" required />
+    </div>
+
+    <hr class="stitch" />
+
+    <div class="step-label"><span class="n">2</span> Membership</div>
+    <div class="card">
+      <label class="field-label">Are you an AORN Member?<span class="req">*</span></label>
+      <div class="radio-row">
+        <label class="opt"><input type="radio" name="aornMember" value="Yes" required /> Yes</label>
+        <label class="opt"><input type="radio" name="aornMember" value="No" required /> No</label>
+      </div>
+    </div>
+    <div class="card">
+      <label class="field-label" for="aornNumber">AORN Membership Number<span class="req">*</span></label>
+      <p class="hint">If not a member, write NA</p>
+      <input type="text" id="aornNumber" name="aornNumber" placeholder="Your answer" required />
+    </div>
+
+    <hr class="stitch" />
+
+    <div class="step-label"><span class="n">3</span> Professional info</div>
+    <div class="card">
+      <label class="field-label" for="hospital">Hospital / Institution Name<span class="req">*</span></label>
+      <input type="text" id="hospital" name="hospital" placeholder="Your answer" required />
+    </div>
+    <div class="card">
+      <label class="field-label" for="designation">Designation</label>
+      <input type="text" id="designation" name="designation" placeholder="Your answer" />
+    </div>
+    <div class="card">
+      <label class="field-label" for="department">Department<span class="req">*</span></label>
+      <input type="text" id="department" name="department" placeholder="Your answer" required />
+    </div>
+    <div class="card">
+      <label class="field-label" for="city">City / State</label>
+      <input type="text" id="city" name="city" placeholder="Your answer" />
+    </div>
+    <div class="card">
+      <label class="field-label" for="experience">Years of Experience in OT<span class="req">*</span></label>
+      <input type="number" min="0" id="experience" name="experience" placeholder="Your answer" required />
+    </div>
+
+    <hr class="stitch" />
+
+    <div class="step-label"><span class="n">4</span> Payment</div>
+
+    <div class="card">
+      <label class="field-label">Payment Method<span class="req">*</span></label>
+      <div class="radio-row">
+        <label class="opt"><input type="radio" name="paymentMethod" value="Cash" required /> Cash</label>
+        <label class="opt"><input type="radio" name="paymentMethod" value="Bank Transfer" required /> Bank Transfer</label>
+        <label class="opt"><input type="radio" name="paymentMethod" value="GPay" required /> GPay</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <label class="field-label">Choose Amount<span class="req">*</span></label>
+      <div id="amountOptions" style="margin-top:10px;">
+        <label class="amount-opt">
+          <span class="label"><input type="radio" name="amountChoice" value="500" required /> AORN Member</span>
+          <span class="price">₹500</span>
+        </label>
+        <label class="amount-opt">
+          <span class="label"><input type="radio" name="amountChoice" value="700" required /> Non-Member</span>
+          <span class="price">₹700</span>
+        </label>
+        <label class="amount-opt">
+          <span class="label"><input type="radio" name="amountChoice" value="custom" required /> Other amount</span>
+          <input type="number" id="customAmount" min="1" placeholder="₹ amount" style="width:100px;border-bottom:1px solid var(--line);padding:4px 2px;font-family:'IBM Plex Mono',monospace;font-size:14px;" />
+        </label>
+      </div>
+      <p class="hint" style="margin-top:8px;margin-bottom:0;">Preset amounts are placeholders — update them in the code to your actual fees.</p>
+    </div>
+
+    <div class="card qr-card" id="qrSection" style="display:none;">
+      <label class="field-label" style="margin-bottom:14px;">Scan &amp; Pay <span id="qrAmountLabel" style="color:var(--amber);"></span></label>
+      <div class="qr-frame">
+        <div id="qrCanvas"></div>
+      </div>
+      <div class="qr-note">Payee: ASSN OF OPERATING ROOM · AORN · 10237008@CBIN</div>
+      <p class="hint" style="margin-top:10px;" id="qrHint">Enter an amount above to generate your payment QR.</p>
+    </div>
+
+    <div class="card" id="utrSection">
+      <label class="field-label" for="utr">UTR / Transaction ID<span class="req">*</span></label>
+      <input type="text" id="utr" name="utr" placeholder="Your answer" required />
+    </div>
+
+    <div class="card">
+      <label class="field-label">Payment Status<span class="req">*</span></label>
+      <div class="radio-row">
+        <label class="opt"><input type="radio" name="paymentStatus" value="Paid" required /> Paid</label>
+        <label class="opt"><input type="radio" name="paymentStatus" value="Not Paid" required /> Not Paid</label>
+      </div>
+    </div>
+
+    <button type="submit" class="submit" id="submitBtn">Submit registration</button>
+    <div class="status" id="statusBox"></div>
+  </form>
+
+  <footer>
+    ASSN. OF OPERATING ROOM NURSES · REGISTRATION DESK
+    <br/>
+    <span class="admin-link" id="adminLinkOpen">Admin login</span>
+  </footer>
+</div>
+
+<!-- ADMIN OVERLAY -->
+<div class="overlay" id="adminOverlay">
+  <div class="admin-panel">
+    <span class="close-x" id="adminClose">×</span>
+    <h2>Admin</h2>
+    <div id="adminLoginView">
+      <p class="hint">Enter the admin passcode to view registrations.</p>
+      <input type="password" id="adminPass" placeholder="Passcode" />
+      <button type="button" class="submit" id="adminLoginBtn" style="margin-top:14px;">Log in</button>
+      <div class="warn-box">The passcode is checked server-side in Apps Script (not stored in this page), which is a real improvement — but it's still a single shared password with no rate-limiting or hashing. Fine for keeping casual visitors out; if you need stronger protection for sensitive data, add Apps Script's OAuth-based access controls instead.</div>
+    </div>
+    <div id="adminDataView" style="display:none;">
+      <p class="hint" id="adminCount">Loading registrations…</p>
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="adminTable">
+          <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Member</th><th>Hospital</th><th>Amount</th><th>Method</th><th>UTR</th><th>Status</th><th>Submitted</th></tr></thead>
+          <tbody id="adminTbody"></tbody>
+        </table>
+      </div>
+      <div class="admin-actions">
+        <button type="button" class="ghost-btn" id="refreshBtn">Refresh</button>
+        <button type="button" class="submit" id="csvBtn" style="margin-top:0;">Download CSV</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   CONFIG — edit these before publishing
+   ========================================================================= */
+  const APPSCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE'; // ends in /exec — see Code.gs setup notes
+  const EVENT_NAME    = '5th AORN National Conference 2026 — AORN Mumbai';
+  const EVENT_DATE    = 'October 17-18, 2026';
+  const EVENT_VENUE   = 'R D. Choski Auditorium, Second Floor, Tata Memorial Hospital, Parel, Mumbai – 400012';
+  const UPI_VPA        = '10237008@CBIN'; // from your Central Bank of India QR
+  const UPI_PAYEE_NAME = 'AORN Mumbai';
+
+  const form = document.getElementById('regForm');
+  const statusBox = document.getElementById('statusBox');
+  const submitBtn = document.getElementById('submitBtn');
+  const customAmountInput = document.getElementById('customAmount');
+  const qrSection = document.getElementById('qrSection');
+  const qrCanvas = document.getElementById('qrCanvas');
+  const qrAmountLabel = document.getElementById('qrAmountLabel');
+  const qrHint = document.getElementById('qrHint');
+  const utrSection = document.getElementById('utrSection');
+  const utrInput = document.getElementById('utr');
+  let qrInstance = null;
+
+  function getSelectedAmount(){
+    const sel = form.querySelector('input[name="amountChoice"]:checked');
+    if (!sel) return null;
+    if (sel.value === 'custom'){
+      const v = Number(customAmountInput.value);
+      return v > 0 ? v : null;
+    }
+    return Number(sel.value);
+  }
+
+  function updateQrVisibility(){
+    const method = form.querySelector('input[name="paymentMethod"]:checked');
+    if (method && method.value === 'GPay'){
+      qrSection.style.display = '';
+      renderQR();
+    } else {
+      qrSection.style.display = 'none';
+    }
+  }
+
+  function updateUtrVisibility(){
+    const method = form.querySelector('input[name="paymentMethod"]:checked');
+    if (method && method.value === 'Cash'){
+      utrSection.style.display = 'none';
+      utrInput.required = false;
+    } else {
+      utrSection.style.display = '';
+      utrInput.required = true;
+    }
+  }
+
+  form.querySelectorAll('input[name="amountChoice"]').forEach(el => {
+    el.addEventListener('change', renderQR);
+  });
+  form.querySelectorAll('input[name="paymentMethod"]').forEach(el => {
+    el.addEventListener('change', updateQrVisibility);
+    el.addEventListener('change', updateUtrVisibility);
+  });
+  customAmountInput.addEventListener('input', () => {
+    const customRadio = form.querySelector('input[name="amountChoice"][value="custom"]');
+    if (customRadio) customRadio.checked = true;
+    renderQR();
+  });
+
+  function renderQR(){
+    const amount = getSelectedAmount();
+    qrCanvas.innerHTML = '';
+    if (!amount){
+      qrAmountLabel.textContent = '';
+      qrHint.textContent = 'Enter an amount above to generate your payment QR.';
+      return;
+    }
+    const upiUrl = `upi://pay?pa=${encodeURIComponent(UPI_VPA)}&pn=${encodeURIComponent(UPI_PAYEE_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent('AORN Conference Registration')}`;
+    qrInstance = new QRCode(qrCanvas, {
+      text: upiUrl,
+      width: 190,
+      height: 190,
+      colorDark: '#0b2f6b',
+      colorLight: '#ffffff'
+    });
+    qrAmountLabel.textContent = '· ₹' + amount;
+    qrHint.textContent = 'This QR already has ₹' + amount + ' filled in — just confirm and pay in your UPI app.';
+  }
+
+
+
+  function showStatus(kind, msg){
+    statusBox.className = 'status show ' + kind;
+    statusBox.textContent = msg;
+  }
+
+  function generatePDF(data, amount){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    let y = 20;
+    doc.setFont('helvetica','bold'); doc.setFontSize(16);
+    doc.text('AORN Mumbai — 5th AORN National Conference 2026', 14, y); y += 8;
+    doc.setFont('helvetica','normal'); doc.setFontSize(11);
+    doc.text(EVENT_NAME, 14, y); y += 6;
+    doc.text(EVENT_DATE + '  ·  ' + EVENT_VENUE, 14, y, { maxWidth: 180 }); y += 14;
+
+    doc.setFont('helvetica','bold'); doc.text('Applicant Details', 14, y); y += 7;
+    doc.setFont('helvetica','normal');
+    const rows = [
+      ['Full Name', data.fullName],
+      ['Email', data.email],
+      ['Mobile', data.mobile],
+      ['AORN Member', data.aornMember],
+      ['AORN Number', data.aornNumber],
+      ['Hospital / Institution', data.hospital],
+      ['Designation', data.designation || '—'],
+      ['Department', data.department],
+      ['City / State', data.city || '—'],
+      ['Years of Experience', data.experience]
+    ];
+    rows.forEach(([k,v]) => { doc.text(k + ':', 14, y); doc.text(String(v ?? '—'), 80, y); y += 7; });
+
+    y += 5;
+    doc.setFont('helvetica','bold'); doc.text('Payment Details', 14, y); y += 7;
+    doc.setFont('helvetica','normal');
+    const payRows = [
+      ['Method', data.paymentMethod],
+      ['Amount', '₹' + amount],
+      ['UTR / Transaction ID', data.utr],
+      ['Status', data.paymentStatus]
+    ];
+    payRows.forEach(([k,v]) => { doc.text(k + ':', 14, y); doc.text(String(v ?? '—'), 80, y); y += 7; });
+
+    return doc;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    if (data.paymentMethod === 'Cash') {
+      data.utr = 'N/A (Cash)';
+    }
+    const amount = getSelectedAmount();
+
+    if (!amount){ showStatus('err', 'Please enter an amount.'); return; }
+    if (APPSCRIPT_URL === 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE'){
+      showStatus('err', 'Backend not connected yet — paste your Apps Script Web App URL into APPSCRIPT_URL in the code.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting…';
+    showStatus('pending', 'Saving your registration…');
+
+    try {
+      const res = await fetch(APPSCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // avoids a CORS preflight against Apps Script
+        body: JSON.stringify({
+          action: 'register',
+          ...data,
+          amount
+        })
+      });
+      const result = await res.json();
+
+      if (result.status === 'success'){
+        const pdfDoc = generatePDF(data, amount);
+        pdfDoc.save(data.fullName ? data.fullName.replace(/\s+/g,'_') + '_AORN_Registration.pdf' : 'AORN_Registration.pdf');
+        showStatus('ok', 'Registration complete! A confirmation email is on its way to ' + data.email + '. Your PDF has also been downloaded.');
+        form.reset();
+        renderQR();
+      } else {
+        showStatus('err', 'Registration could not be saved: ' + (result.message || 'unknown error'));
+      }
+    } catch(err){
+      console.error(err);
+      showStatus('err', 'Could not reach the registration server. Please try again.');
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit registration';
+  });
+
+  /* =========================================================================
+     ADMIN PANEL
+     ========================================================================= */
+  const adminOverlay = document.getElementById('adminOverlay');
+  const adminLoginView = document.getElementById('adminLoginView');
+  const adminDataView = document.getElementById('adminDataView');
+  const adminTbody = document.getElementById('adminTbody');
+  const adminCount = document.getElementById('adminCount');
+  let lastLoadedRecords = [];
+  let adminPasscode = '';
+
+  document.getElementById('adminLinkOpen').addEventListener('click', () => {
+    adminOverlay.classList.add('show');
+  });
+  document.getElementById('adminClose').addEventListener('click', () => {
+    adminOverlay.classList.remove('show');
+  });
+
+  document.getElementById('adminLoginBtn').addEventListener('click', async () => {
+    adminPasscode = document.getElementById('adminPass').value;
+    adminLoginView.style.display = 'none';
+    adminDataView.style.display = 'block';
+    await loadRegistrations();
+  });
+
+  async function loadRegistrations(){
+    adminCount.textContent = 'Loading registrations…';
+    adminTbody.innerHTML = '';
+    if (APPSCRIPT_URL === 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE'){
+      adminCount.textContent = 'Backend not connected yet — paste your Apps Script Web App URL into APPSCRIPT_URL.';
+      return;
+    }
+    try{
+      const url = APPSCRIPT_URL + '?action=list&pass=' + encodeURIComponent(adminPasscode);
+      const res = await fetch(url);
+      const result = await res.json();
+
+      if (result.status !== 'success'){
+        adminCount.textContent = result.message || 'Incorrect passcode.';
+        adminDataView.style.display = 'none';
+        adminLoginView.style.display = 'block';
+        return;
+      }
+
+      const records = result.data || [];
+      lastLoadedRecords = records;
+      adminCount.textContent = records.length + ' registration(s)';
+      records.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${r['Full Name']||''}</td><td>${r['Email']||''}</td><td>${r['Mobile']||''}</td><td>${r['AORN Member']||''}</td><td>${r['Hospital / Institution']||''}</td><td>₹${r['Amount (INR)'] ?? ''}</td><td>${r['Payment Method']||''}</td><td>${r['UTR']||''}</td><td>${r['Payment Status']||''}</td><td>${(r['Timestamp']||'').toString().slice(0,10)}</td>`;
+        adminTbody.appendChild(tr);
+      });
+    } catch(err){
+      console.error(err);
+      adminCount.textContent = 'Could not reach the registration server.';
+    }
+  }
+
+  document.getElementById('refreshBtn').addEventListener('click', loadRegistrations);
+
+  document.getElementById('csvBtn').addEventListener('click', () => {
+    if (!lastLoadedRecords.length){ alert('No registrations to export yet.'); return; }
+    const headers = Object.keys(lastLoadedRecords[0]);
+    const csvRows = [headers.join(',')];
+    lastLoadedRecords.forEach(r => {
+      const row = headers.map(h => '"' + String(r[h] ?? '').replace(/"/g,'""') + '"');
+      csvRows.push(row.join(','));
+    });
+    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'AORN_registrations_' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+</script>
+</body>
+</html>
