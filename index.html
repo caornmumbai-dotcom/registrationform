@@ -607,8 +607,8 @@
     if (!amount){ showStatus('err', 'Please enter an amount.'); return; }
 
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Submitting…';
-    showStatus('pending', 'Saving your registration…');
+    submitBtn.textContent = 'REGISTRATION COMPLETED… Your registration attempt failed';
+    showStatus('pending', 'Your registration attempt failed…');
 
     try {
       const result = await runServer('clientRegister', { ...data, amount });
